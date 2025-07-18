@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Wine NOT?</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f3f3;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            margin: 20px 0;
+        }
+        
+        .checkout-form {
+            margin-top: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        .payment-method {
+            margin: 20px 0;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover {
+            border-color: #d32f2f;
+        }
+        
+        .payment-option input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .payment-details {
+            display: none;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .gcash-details {
+            text-align: center;
+        }
+        
+        .gcash-details img {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+        
+        .submit-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #b71c1c;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Checkout</h1>
+        
+        <div class="cart-items" id="checkoutItems">
+            <!-- Cart items will be added here dynamically -->
+        </div>
+        
+        <div class="cart-total" id="checkoutTotal">
+            Total: $0.00
+        </div>
+        
+        <div class="checkout-form" id="checkoutForm">
+            <h2>Shipping Information</h2>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Shipping Address</label>
+                <textarea id="address" name="address" rows="4" required></textarea>
+            </div>
+            
+            <h2>Payment Method</h2>
+            <div class="payment-method">
+                <div class="payment-option">
+                    <input type="radio" id="cod" name="payment" value="COD" checked>
+                    <label for="cod">Cash on Delivery (COD)</label>
+                </div>
+                
+                <div class="payment-option">
+                    <input type="radio" id="gcash" name="payment" value="GCash">
+                    <label for="gcash">GCash</label>
+                </div>
+                
+                <div id="gcashDetails" class="payment-details">
+                    <div class="gcash-details">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/GCash_logo.svg/1200px-GCash_logo.svg.png" alt="GCash Logo">
+                        <p>Please send payment to:</p>
+                        <p><strong>GCash Number:</strong> 0917 123 4567</p>
+                        <p><strong>Account Name:</strong> Wine NOT?</p>
+                        <p><strong>Amount:</strong> <span id="gcashAmount">$0.00</span></p>
+                        <div class="form-group">
+                            <label for="gcashReference">Reference Number</label>
+                            <input type="text" id="gcashReference" name="gcashReference" placeholder="Enter GCash reference number" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="submit-btn" id="submitOrder">Place Order</button>
+        </div>
+    </div>
+
+    <script>
+        // Load cart from localStorage
+        const cart = JSON.parse(localStorage.getItem('wineShopCart')) || [];
+        const checkoutItems = document.getElementById('checkoutItems');
+        const checkoutTotal = document.getElementById('checkoutTotal');
+        const checkoutForm = document.getElementById('checkoutForm');
+        const submitOrder = document.getElementById('submitOrder');
+        const gcashDetails = document.getElementById('gcashDetails');
+        const gcashAmount = document.getElementById('gcashAmount');
+        const gcashReference = document.getElementById('gcashReference');
+        const paymentOptions = document.querySelectorAll('input[name="payment"]');
+        
+        // Display cart items
+        if (cart.length === 0) {
+            checkoutItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+            checkoutForm.style.display = 'none';
+        } else {
+            checkoutItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div>${item.name} × ${item.quantity}</div>
+                    <div>$${(item.price * item.quantity).toFixed(2)}</div>
+                </div>
+            `).join('');
+            
+            // Calculate and display total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            checkoutTotal.textContent = `Total: $${total.toFixed(2)}`;
+            gcashAmount.textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // Toggle GCash details when payment method changes
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', function() {
+                if (this.value === 'GCash') {
+                    gcashDetails.style.display = 'block';
+                    gcashReference.required = true;
+                } else {
+                    gcashDetails.style.display = 'none';
+                    gcashReference.required = false;
+                }
+            });
+        });
+        
+        // Submit order
+        submitOrder.addEventListener('click', function() {
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const gcashRef = paymentMethod === 'GCash' ? gcashReference.value : null;
+            
+            // Validate form
+            if (!name || !email || !address) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            if (paymentMethod === 'GCash' && !gcashRef) {
+                alert('Please enter your GCash reference number');
+                return;
+            }
+            
+            // Create order object
+            const order = {
+                orderId: Date.now(), // Simple unique ID
+                customer: { name, email, address },
+                payment: {
+                    method: paymentMethod,
+                    reference: gcashRef
+                },
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                date: new Date().toLocaleString(),
+                status: paymentMethod === 'COD' ? 'Pending' : 'Paid'
+            };
+            
+            // Save order to localStorage
+            const orders = JSON.parse(localStorage.getItem('wineShopOrders')) || [];
+            orders.push(order);
+            localStorage.setItem('wineShopOrders', JSON.stringify(orders));
+            
+            // Clear the cart
+            localStorage.removeItem('wineShopCart');
+            
+            // Show success message
+            alert(`Order #${order.orderId} placed successfully!\nPayment Method: ${paymentMethod}`);
+            
+            // Redirect to confirmation page with order ID
+            window.location.href = `confirmation.html?orderId=${order.orderId}`;
+        });
+    </script>
+</body>
+</html>

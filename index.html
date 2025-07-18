@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine NOT? - Premium Wines</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f3f3;
+            color: #333;
+        }
+        
+        header {
+            background-color: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 3em;
+            font-weight: bold;
+        }
+        
+        .tagline {
+            font-style: italic;
+            margin: 10px 0 0;
+            font-size: 1.2em;
+        }
+        
+        .age-warning {
+            background-color: #b71c1c;
+            color: white;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .wine-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .wine-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .wine-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .wine-image {
+            width: 150px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        
+        .wine-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #d32f2f;
+        }
+        
+        .wine-price {
+            font-size: 1.1em;
+            margin: 10px 0;
+            color: #333;
+        }
+        
+        .add-to-cart {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #b71c1c;
+        }
+        
+        .cart-sidebar {
+            position: fixed;
+            right: -350px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: right 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .cart-sidebar.open {
+            right: 0;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #d32f2f;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .checkout-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #d32f2f;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #b71c1c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Wine NOT?</h1>
+        <p class="tagline">Discover the perfect bottle for every occasion</p>
+    </header>
+    
+    <div class="age-warning">
+        ⚠️ You must be 18 or older to purchase alcohol. By proceeding, you confirm you are of legal drinking age.
+    </div>
+    
+    <div class="wine-container">
+        <!-- Wine Product 1 -->
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Cabernet Sauvignon" class="wine-image">
+            <div class="wine-name">Cabernet Sauvignon</div>
+            <div class="wine-price">$24.99</div>
+            <button class="add-to-cart" data-name="Cabernet Sauvignon" data-price="24.99">Add to Cart</button>
+        </div>
+        
+        <!-- Wine Product 2 -->
+        <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDXA5gHOiOSbOpqxIu69E6XUq9weFCN58BSw&s" alt="Chardonnay" class="wine-image">
+            <div class="wine-name">Chardonnay</div>
+            <div class="wine-price">$19.99</div>
+            <button class="add-to-cart" data-name="Chardonnay" data-price="19.99">Add to Cart</button>
+        </div>
+        
+        <!-- Wine Product 3 -->
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Pinot Noir" class="wine-image">
+            <div class="wine-name">Pinot Noir</div>
+            <div class="wine-price">$29.99</div>
+            <button class="add-to-cart" data-name="Pinot Noir" data-price="29.99">Add to Cart</button>
+        </div>
+        
+        <!-- Wine Product 4 -->
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Merlot" class="wine-image">
+            <div class="wine-name">Merlot</div>
+            <div class="wine-price">$22.99</div>
+            <button class="add-to-cart" data-name="Merlot" data-price="22.99">Add to Cart</button>
+        </div>
+        
+        <!-- Wine Product 5 -->
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAOBhMSEBAOEBAQEBMQFhAPEBANDxIQFRIXFhURExMYHikgGBolGxYTLTEiMTUrLi46FyszODMuOCgxLisBCgoKDg0OGA8QGi0mHR0tLS0rLy0tKystLS0tLS0tKy0tLS0rLSstLS0tLS0tLS0tLS0tLS0rLS0tLS0tKystLf/AABEIAOEA4QMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABAgFBgcDAgH/xABJEAACAgEBBAQICgYHCQAAAAAAAQIDEQQFEiExBgdBcRMiMjRRYZGyFCM1cnN0gbGzwSQmMzZSoUKCk6PD0eEWQ1NioqTC0tP/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAgED/8QAHxEBAQACAgIDAQAAAAAAAAAAAAECEQMxEkEhUWET/9oADAMBAAIRAxEAPwDuIAAAAAAAAAAAAAAAAIO29pR0ex7tRKMpxoqla4wxvNRWcLJx7avXBr41qVVOhgpdk1bdu+pyUo59iDdO3g4HouuvaO98ZRoZrPKELqn7XN/cdr6O7VWu2HTqVB1+HrU9xvecW+az2rOePaZss0yIANYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwfTi9VdD9XJ8vg1keDUfKi45z9pWTaNaWnSbbXZx/y5dhZjp6of7Gazf3nFaeb8RpSyllcX60is+1oNaaOXl47EkYqMbRFZ/1ZaDqv1Cs6B6RpRju1yrajyzCyUG363jL7yrunRZ/qqUf9gdLub+N2ed9pvf8LPfxj+jvZx6jJ2ZdNsABSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGv9YH7k636tZ7pW3bfm0e4sn09X6la36rb7jK2bX46ePcYqMPp+ZZnqjeer/Td9349hWajmWW6nZZ6v9P6p3r/uJmTtt6boACkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMJ03hvdDtas4/RL3nnyrkytm24JbNrkuc1x9HLPAsL1nbQjp+hGq3mlK6p6eCzxlO1bvDuTk/6pXfad8btnQjF+NDsaazwwYqMPpVkst1PwUegNGHnM736MZvnwK2UVOC8Y7/ANR+2IXdGZafeXhNPbJ7va6pvKkl85zX2L0kztWXTo4ALcwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMb0h23Ts/ZM9Rc8RgsKKxvTm/JhH1v8A17DJHDOuPbMtV0mjpIt+D0qWV2O6aUpP14i4r1cTK2RqvSTb2q2vtJ2WyaisqFab8HVH0RX3vm/YlhNZWqcLOWzY1QqtL3LJpuuuc7HJ+ka0qPVXKXBoyGxdddotoRv01kq7IvOE+D9K+1c0+DMFTLxjIVT4E1qzXQTpbXtbZW+koX14jbV/DJ8pR/5Xh+xrsNlK19X23noOk9VmcVzkqbV2OqbS3n814f2FlCpdos0AA1gAAAAAAAAAAAAAAAAAAAAAAAAAABWraNjt6Z6uUub1V3sVkkl7EiypWnWrHTLVr0au9f30jPbY+9vSxoJY9Bo1vkm79IF+gS7jUadDZbW3FJRjwcpNqO9w8VYTbfFcuWVnmZldKxm0GvyibUxdsuypZe7JLnu72Y+tqSTx6xWZLL0qyztJrfB9zLYbIudmyqZvnOmuT73BMqdX29z+4tdsKONiadejT1L+7RuPaMk4AFJAAAAAAAAAAAAAAAAAAAAAAAAAAAON6Dq91Wq6T6u+yUdPRLV3yi5LwltkXbJqSgvJi+xtp9uGuJ2Qj1fs0ZTbUH1eaB1YtV13pU7HXH2Qw/5mj9KNnUaDpBKqupVU/B63TGKk4b0pz8LLebbcspZ9R2Wwwe39h6fXUqN9e9uvMZJuE4Pt3ZLuXDk8HHmw88dL48/G/Liez9O7NrQqnXvyt1VSxiLjKpvdtjKOcqLjnPZ+fQ9b1abMsT3ap0t9tNtix3Rm5R/kT9nbG2bszV5U4RvaS39RfGVqjJ4WN5rdy+Ge3kbF2kYYXGLzz305JtzqutpqlPS2+GST+KtUa7Xw/ozXit9+6dt2OsbJpTWGqa1h8GvERjN9b7jlbySk16FJtJ/9MvYZnReZw+ZH3Ud8HO17AAtIAAAAAAAAAAAAAAAAAAAAAAAAAABBu1EatJvSy8YSjHG9KUmlGEfW20vtJxh9fVOXwecI+EVV3hJQUowbTpsgmt5pPEpxeMrl6UZRHv1c69XHwttcY8IzgnGSVlj3a6oLG+3l5cnhcOC4vdwVO3I6nb1ObLK6pWWRoqgp72o3Y2J6i3HKlqNjhnhLCa5GXWxIRt3pqpQlPflGxztsk0m18ZvJJZ4uOGnx5819UaTSadrwcNPU41qpOKhGarjyr3ue6uHDsMrWgznOex9RKeY1656vTSn41lvxSm7oV1cpWzcdUottKKprWGlg2H4XtC3TQ8Dp1p/ibHmycLPHxu1LjiWMeNxSfBZxxTyu0dLRqNBKpTjDMt+M6nBSruUvCRth2byknL14ee09Nm2zlQlbZRZYlxlRlRkuW/utvdy+zLx6WQ14aKnVqfxtlG7vt4jGdknDCUYKTa3cJcX4288vhnC2nR+aQ+ZH3UYlmW0fmkPmR91FYsr2ABbAAAAAAAAAAAAAAAAAAAAAAAAAAACPSvil3Eg4HXl9J7vjd5S1V8dyNk9+OLpLyc8OC/mRllp04+Pz3+O43VqUcOKa9DWUY67R88QqxlvyPvOUbZ0s3U93fXDjvynnPHljs/yNJnpbpNpSTaeGvCXZWVlZXZlJ+w53OOuPB+rDfBMPhCpceHidnI+6qIx5RhF4x4sVH7O4rlVs2/8AknjevzhvBOr0e5F+GeOOI4nZHex5WMrjzRPnG/w/Vg2ZbSeaQ+ZH7kVjv0qhrN1y3cR3vGcuLz5PHBZfZHyTT9DX7iOnHlty5OPw18pYAOrkAAAAAAAAAAAAAAAAAAAAAAAAAAAVvW0HDpTqV4OuX6TcvGdi/wB7L0SRZArFd+9ep+s3fiyJslsXjlZvTKbd2qo6Rv4PS/61/wD7mk37SzH9lUvts/ORsnSPzJmm28jLhF48mX2lVa/xv2NT73d+U0Tqtor/AIFHt1H/ANDCVeUTayfCK/pl9sh8Oy/2daxx4O385lqNkfJNP0NfuIqZHt7mWz2R8k0/Q1+4isZJfhzzyt7SwAW5gAAAAAAAAAAAAAAAAAAAAAAAAAAFYrv3r1P1m78WRZ0rDN/rTqfrN34sjPbY9OknmTNMt5G59JPMmaXbyFVHzV5RNrINXlE6oxT1j29z+4tnsj5Kp+hr9xFTI8n3P7i2myvkun6Gv3EJ2jJKABSQAAAAAAAAAAAAAAAAAAAAAAAAAACsE/3n1P1i38SRZ8q9n9ZNR9Pb+JIz22PTpG/0Jmm28jcOkfmb+w0+3kKqPmvyibUQq/KJtRjXqu35rLa7K+S6foa/cRUpcn81ltdl/JlX0VfuITtOSUACkgAAAAAAAAAAAAAAAAAAAAAAAAAAFW9K97bdz9Ns37ZNlpCrVPxe3bo/w3Tjx4PhNr8jPbY9+kfmbNOt5G29IZZ0j7zUbXwFVH5X5RNrIFb4k6pmNey7e5lstiWb2xqJfxUVS9sEypq5N+hP7i2WxaXXseiD5woqi+9QSE7TkmgApIAAAAAAAAAAAAAAAAAAAAAAAAAAByTpv1W6m/bk9ToJ6dK5uc6bpTqxY/KcJRi8pvL7MZOtgN2r5rurvbbra+CUTz2w1Vf8lPBgZ9WG3M+YS/t9G/8AELQgzRtVyPVftzPmEv7fSL/EJdHVdtxvzKEPXPU6f/xkyzAGjbhXRjqd172nXPXWaeuiMlKUKrJW2zSedxLdUUn2vPD0M7qAbo2AAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/9k=" alt="Carlo Rossi" class="wine-image">
+            <div class="wine-name">Carlo Rossi</div>
+            <div class="wine-price">$18.99</div>
+            <button class="add-to-cart" data-name="Carlo Rossi" data-price="18.99">Add to Cart</button>
+        </div>
+        
+        <!-- Wine Product 6 -->
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Novellino" class="wine-image">
+            <div class="wine-name">Novellino</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Novellino" data-price="16.99">Add to Cart</button>
+        </div>
+
+                <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="May" class="wine-image">
+            <div class="wine-name">May</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="May" data-price="16.99">Add to Cart</button>
+        </div>
+
+                <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Jacob Creek" class="wine-image">
+            <div class="wine-name">Jacob Creek</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Jacob Creek" data-price="16.99">Add to Cart</button>
+        </div>
+
+                <div class="wine-card">
+            <img src="https://boozy.ph/cdn/shop/products/AltozanoTempranillo750ml_grande.png?v=1726032566" alt="Altozano" class="wine-image">
+            <div class="wine-name">Altozano</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Altozano" data-price="16.99">Add to Cart</button>
+        </div>
+
+
+        <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZACu_Ku1Udv0eRST7O21DYOAWgMTPDW7mcXxkqXq65ksFQM3qHfBQS19ZlwG-8qlaH-8&usqp=CAU" alt="Maria Clara" class="wine-image">
+            <div class="wine-name">Maria Clara</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Maria Clara" data-price="16.99">Add to Cart</button>
+        </div>
+
+        <div class="wine-card">
+            <img src="data:image/jpeg;base64,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" alt="Bacardi" class="wine-image">
+            <div class="wine-name">Bacardi</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Bacardi" data-price="16.99">Add to Cart</button>
+        </div>
+
+        <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV2dLNeWw6VpyitEwT731ob9wNn82pnubX7w&s" alt="Murphy Goode" class="wine-image">
+            <div class="wine-name">Murphy Goode</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Murphy Goode" data-price="16.99">Add to Cart</button>
+        </div>
+
+         <div class="wine-card">
+            <img src="https://barrelsandbeyondph.com/cdn/shop/products/AAA_18_a24383a9-2035-46ca-8fa8-8f735199451a.png?v=1659564835" alt="Tommasi" class="wine-image">
+            <div class="wine-name">Tommasi</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Tommasi" data-price="16.99">Add to Cart</button>
+        </div>
+
+        <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqlxe7LrbstHoVJEfOH_eP-pKzRjo5_mGKPg&s" alt="Santa Ana" class="wine-image">
+            <div class="wine-name">Santa Ana</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Santa Ana" data-price="16.99">Add to Cart</button>
+        </div>
+
+        <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaFZ_puSenW9WeNThw4pxf0mUFo2aNzxTAuw&s" alt="Chardonnay" class="wine-image">
+            <div class="wine-name">Chardonnay</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Chardonnay" data-price="16.99">Add to Cart</button>
+        </div>
+
+                <div class="wine-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCb8oU_B4ZHxMjhTzDQwHjr4fRwAewIPJ0Lg&s" alt="Villa Tinta" class="wine-image">
+            <div class="wine-name">Villa Tinta</div>
+            <div class="wine-price">$16.99</div>
+            <button class="add-to-cart" data-name="Villa Tinta" data-price="16.99">Add to Cart</button>
+        </div>
+    </div>
+    
+    <!-- Cart Icon -->
+    <div class="cart-icon" id="cartIcon">
+        🛒
+        <div class="cart-count" id="cartCount">0</div>
+    </div>
+    
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" id="closeCart">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be added here dynamically -->
+            <p>Your cart is empty</p>
+        </div>
+        <div class="cart-total" id="cartTotal">
+            Total: $0.00
+        </div>
+        <button class="checkout-btn">Proceed to Checkout</button>
+    </div>
+    
+    <script>
+        
+        // Cart functionality
+        const cart = JSON.parse(localStorage.getItem('wineShopCart')) || [];
+        const cartIcon = document.getElementById('cartIcon');
+        const cartSidebar = document.getElementById('cartSidebar');
+        const closeCart = document.getElementById('closeCart');
+        const cartItems = document.getElementById('cartItems');
+        const cartCount = document.getElementById('cartCount');
+        const cartTotal = document.getElementById('cartTotal');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        const checkoutBtn = document.querySelector('.checkout-btn');
+
+        // Load cart from localStorage on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCart();
+        });
+
+        // Toggle cart sidebar
+        cartIcon.addEventListener('click', () => {
+            cartSidebar.classList.add('open');
+        });
+
+        closeCart.addEventListener('click', () => {
+            cartSidebar.classList.remove('open');
+        });
+
+        // Add to cart functionality
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const name = button.getAttribute('data-name');
+                const price = parseFloat(button.getAttribute('data-price'));
+                
+                // Check if item already exists in cart
+                const existingItem = cart.find(item => item.name === name);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        name,
+                        price,
+                        quantity: 1
+                    });
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('wineShopCart', JSON.stringify(cart));
+                updateCart();
+                cartSidebar.classList.add('open');
+            });
+        });
+
+        // Update cart display
+        function updateCart() {
+            // Update count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update items list
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div>${item.name} × ${item.quantity}</div>
+                        <div>$${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // Update total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        // Checkout functionality
+        checkoutBtn.addEventListener('click', function() {
+            // Save cart to localStorage before proceeding to checkout
+            localStorage.setItem('wineShopCart', JSON.stringify(cart));
+            
+            // Redirect to checkout page
+            window.location.href = "checkout.html";
+        });
+    </script>
+
+
+
+    
+</body>
+</html>
